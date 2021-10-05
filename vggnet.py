@@ -21,29 +21,17 @@ def VGGNet(
     input_shape: typing.Tuple[int],
     classes: int = 1000
 ) -> Model:
-    """
-    Implementation of the VGGNet architecture.
-    Arguments:
-    name         -- name of the architecture
-    architecture -- number of output channel per convolution layers in VGGNet
-    input_shape  -- shape of the images of the dataset
-    classes      -- integer, number of classes
-    Returns:
-    model        -- a Model() instance in Keras
-    """
-
-    # convert input shape into tensor
+  
     X_input = Input(input_shape)
 
-    # make convolution layers
+ 
     X = make_conv_layer(X_input, architecture)
 
-    # flatten the output and make fully connected layers
     X = Flatten()(X)
     X = make_dense_layer(X, 4096)
     X = make_dense_layer(X, 4096)
 
-    # classification layer
+    
     X = Dense(units = classes, activation = "softmax")(X)
 
     model = Model(inputs = X_input, outputs = X, name = name)
@@ -54,22 +42,10 @@ def make_conv_layer(
     architecture: typing.List[ typing.Union[int, str] ],
     activation: str = 'relu'
 ) -> tf.Tensor:
-    """
-    Method to create convolution layers for VGGNet.
-    In VGGNet
-        - Kernal is always 3x3 for conv-layer with padding 1 and stride 1.
-        - 2x2 kernel for max pooling with stride of 2.
-    Arguments:
-    X            -- input tensor
-    architecture -- number of output channel per convolution layers in VGGNet
-    activation   -- type of activation method
-    Returns:
-    X           -- output tensor
-    """
-
+   
     for output in architecture:
 
-        # convolution layer
+      
         if type(output) == int:
             out_channels = output
 
@@ -82,10 +58,9 @@ def make_conv_layer(
             X = BatchNormalization()(X)
             X = Activation(activation)(X)
 
-            # relu activation is added (by default activation) so that all the
-            # negative values are not passed to the next layer
+          
 
-        # max-pooling layer
+       
         else:
             X = MaxPooling2D(
                 pool_size = (2, 2),
@@ -95,16 +70,6 @@ def make_conv_layer(
     return X
 
 def make_dense_layer(X: tf.Tensor, output_units: int, dropout = 0.5, activation = 'relu') -> tf.Tensor:
-    """
-    Method to create dense layer for VGGNet.
-    Arguments:
-    X            -- input tensor
-    output_units -- output tensor size
-    dropout      -- dropout value for regularization
-    activation   -- type of activation method
-    Returns:
-    X            -- input tensor
-    """
 
     X = Dense(units = output_units)(X)
     X = BatchNormalization()(X)
